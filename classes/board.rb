@@ -14,10 +14,15 @@ class Board
   public
 
   def draw
-    board.each do |arr|
+    board.each_with_index do |arr, index|
+      print "#{(index - 8).abs}|"
       arr.each { |tile| print tile.string }
       puts
     end
+    ('a'..'h').each do |letter|
+      print letter == 'a' ? "   #{letter} " : " #{letter} "
+    end
+    puts
   end
 
   private

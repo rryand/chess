@@ -16,6 +16,25 @@ BLACK = {
   PAWN: " \u2659 "
 }
 
+MOVESET = {
+  ROOK: [
+    [0, 1], [0, -1], [1, 0], [-1, 0]
+  ],
+  KNIGHT: [
+    [1, 2], [2, 1], [-1, 2], [-2, 1],
+    [1, -2], [2, -1], [-1, -2], [-2, -1]
+  ],
+  BISHOP: [
+    [1, 1], [1, -1], [-1, 1], [-1, -1]
+  ],
+  WHITE_PAWN: [
+    [0, 2], [0, 1], [1, 1], [-1, 1]
+  ],
+  BLACK_PAWN: [
+    [0, -2], [0, -1], [1, -1], [-1, -1]
+  ]
+}
+
 class ChessPiece
   attr_reader :color
   attr_accessor :alive, :moves
@@ -30,10 +49,20 @@ end
 WHITE.each_key do |key|
   klass_name = key.to_s.downcase.capitalize
   klass = Class.new(ChessPiece) do
-    attr_reader :char
+    attr_reader :char, :moveset
 
     define_method(:initialize) do |color|
       @char = color == :white ? WHITE[key] : BLACK[key]
+      case key
+      when :PAWN
+        @moveset = color == :white ? MOVESET[:WHITE_PAWN] : MOVESET[:BLACK_PAWN]
+      when :QUEEN
+        @moveset = MOVESET[:ROOK] + MOVESET[:BISHOP]
+      when :KING
+        @moveset = MOVESET[:ROOK]
+      else
+        @moveset = MOVESET[key]
+      end
       super(color)
     end
   end

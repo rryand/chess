@@ -11,8 +11,8 @@ describe Board do
 
     it "places chess pieces on the board" do
       [0, 1, 6, 7].each do |index|
-        board.board[index].each do |obj|
-          expect(obj).to exist
+        board.board[index].each do |tile|
+          expect(tile.piece).to_not be_nil
         end
       end
     end

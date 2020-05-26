@@ -11,7 +11,7 @@ class Tile
     if piece.nil?
       bg_color
     else
-      bg_color.split.insert(1, piece).join
+      bg_color.split.insert(1, piece.char).join
     end
   end
 end

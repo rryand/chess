@@ -1,4 +1,5 @@
 require_relative "tile"
+require_relative "chess_piece"
 
 BG_BLACK = "\e[40m   \e[0m"
 BG_WHITE = "\e[47m   \e[0m"
@@ -23,7 +24,8 @@ class Board
 
   def build
     @board = build_board
-    place_pieces
+    place_pieces(BLACK, 0, 1)
+    place_pieces(WHITE, 7, 6)
   end
 
   def build_board
@@ -38,28 +40,13 @@ class Board
     end
   end
 
-  def place_pieces
-    place_black_pieces
-    place_white_pieces
-  end
-
-=begin
-  def place_black_pieces
-    black_values = BLACK.values[0...-1] # exclude pawn
-    black_values.push(BLACK[:BISHOP], BLACK[:KNIGHT], BLACK[:ROOK])
-    @board[0].each_with_index do |tile, index|
-      tile.piece = black_values[index]
+  def place_pieces(hash, index1, index2)
+    color = hash == WHITE ? :white : :black
+    keys = hash.keys[0...-1] # exclude pawn
+    keys.push(:BISHOP, :KNIGHT, :ROOK)
+    @board[index1].each_with_index do |tile, index|
+      tile.piece = Object.const_get(keys[index].to_s.downcase.capitalize).new(color)
     end
-    @board[1].each { |tile| tile.piece = BLACK[:PAWN] }
+    @board[index2].each { |tile| tile.piece = Pawn.new(color) }
   end
-
-  def place_white_pieces
-    white_values = WHITE.values[0...-1] # exclude pawn
-    white_values.push(WHITE[:BISHOP], WHITE[:KNIGHT], WHITE[:ROOK])
-    @board[-1].each_with_index do |tile, index|
-      tile.piece = white_values[index]
-    end
-    @board[-2].each { |tile| tile.piece = WHITE[:PAWN] }
-  end
-=end
 end

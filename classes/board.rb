@@ -5,7 +5,7 @@ BG_BLACK = "\e[40m   \e[0m"
 BG_WHITE = "\e[47m   \e[0m"
 
 class Board
-  attr_reader :board
+  attr_accessor :board
 
   def initialize
     build

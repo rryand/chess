@@ -1,6 +1,9 @@
 require_relative "../classes/chess_piece"
+require_relative "../classes/board"
 
 describe Pawn do
+  let(:board) { board = Board.new }
+
   context "white pieces" do
     it "creates a pawn piece" do
       pawn = Pawn.new(:white)
@@ -26,6 +29,20 @@ describe Pawn do
       rook = Rook.new(:black)
       expect(rook.color).to eq(:black)
       expect(rook.char).to eq(BLACK[:ROOK])
+    end
+  end
+
+  describe "#move" do
+    let(:pawn) { Pawn.new(:white) }
+
+    it "moves pawn 1 square forward" do
+      pawn.move("a2:a3", board.board)
+      #board.draw
+      expect(board.board[5][0].piece).to_not be_nil
+    end
+
+    it "returns nil if invalid move" do
+      expect(pawn.move("a2:a5", board.board)).to be_nil
     end
   end
 end

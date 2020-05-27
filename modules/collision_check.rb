@@ -1,13 +1,19 @@
 module CollisionCheck
+
+  public
+
   def collision(initial, final, move, piece)
     klass = piece.class.to_s
     if ["Rook", "Bishop", "Queen"].include?(klass)
       collision_special(initial, final, move)
-    elsif klass != "Knight" #add for pawn
-      return true unless board[final[1]][final[0]].piece.nil?
+    elsif klass == "Knight"
+      collision_knight
+    else
+      collision_pawn(initial, move, piece)
     end
-    false #knight default
   end
+
+  private
 
   def collision_special(initial, final, move)
     arr = [initial]
@@ -17,5 +23,21 @@ module CollisionCheck
       arr << [x2 + x1, y2 - y1]
       return true unless board[y2 - y1][x2 + x1].nil?
     end
+    false
+  end
+
+  def collision_knight
+    false
+  end
+
+  def collision_pawn(initial, move, piece)
+    x1, y1 = move
+    x2, y2 = initial
+    if piece.moveset[0] == move
+      return true unless board[y2 - (y1.abs)/y1][x1].piece.nil? && board[y2 - y1][x1].piece.nil?
+    elsif piece.moveset[1] == move
+      return true unless board[y2 - y1][x1].piece.nil?
+    end
+    false
   end
 end

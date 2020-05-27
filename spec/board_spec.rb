@@ -86,11 +86,9 @@ describe Board do
       end
 
       it "returns nil if bishop has invalid move" do
-        puts "-----"
         board.move("d2:d4")
         board.move("d7:d5")
         board.move("c2:c3")
-        board.draw
         expect(board.move("c8:f6")).to be_nil
       end
     end

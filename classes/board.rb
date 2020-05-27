@@ -86,11 +86,12 @@ class Board
     x_init, y_init = initial
     x_fin, y_fin = final
     mv = [x_fin - x_init, y_init - y_fin]
-    outside_moveset(x_fin, y_fin, mv, piece)
-    # add #collision and #friendly_fire
+    outside_moveset?(x_fin, y_fin, mv, piece) || 
+    friendly_fire?(piece, board[y_fin][x_fin].piece)
+    # add #collision
   end
 
-  def outside_moveset(x_fin, y_fin, move, piece)
+  def outside_moveset?(x_fin, y_fin, move, piece)
     if piece.class.to_s == "Pawn"
       if piece.moveset[-2..-1].include?(move)
         return true if board[y_fin][x_fin].piece.nil?
@@ -100,5 +101,10 @@ class Board
     end
     return true unless piece.moveset.include?(move)
     false
+  end
+
+  def friendly_fire?(piece, captured_piece)
+    return false if captured_piece.nil?
+    piece.color == captured_piece.color ? true : false
   end
 end

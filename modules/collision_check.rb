@@ -21,7 +21,7 @@ module CollisionCheck
     until arr[-1] == final
       x2, y2 = arr[-1]
       arr << [x2 + x1, y2 - y1]
-      return true unless board[y2 - y1][x2 + x1].nil?
+      return true unless board[y2 - y1][x2 + x1].piece.nil?
     end
     false
   end

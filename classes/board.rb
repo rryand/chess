@@ -1,10 +1,12 @@
 require_relative "tile"
 require_relative "chess_piece"
+require_relative "../modules/collision_check"
 
 BG_BLACK = "\e[40m   \e[0m"
 BG_WHITE = "\e[47m   \e[0m"
 
 class Board
+  include CollisionCheck
   attr_accessor :board
 
   def initialize
@@ -90,7 +92,8 @@ class Board
     x_fin, y_fin = final
     mv = return_move(x_init, y_init, x_fin, y_fin, piece)
     outside_moveset?(x_fin, y_fin, mv, piece) || 
-    friendly_fire?(piece, board[y_fin][x_fin].piece) 
+    friendly_fire?(piece, board[y_fin][x_fin].piece) ||
+    collision(initial, final, mv, piece)
   end
 
   def return_move(x_init, y_init, x_fin, y_fin, piece)

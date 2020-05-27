@@ -25,6 +25,17 @@ class Board
     puts
   end
 
+  def move(pos_string) #as long as move is valid
+    letters = ('a'..'h').to_a
+    initial, final = pos_string.downcase.split(':')
+    initial = [letters.index(initial[0]), (initial[1].to_i - 8).abs]
+    final = [letters.index(final[0]), (final[1].to_i - 8).abs]
+    piece = get_chess_piece(initial)
+    return nil if piece.nil? || invalid_move?(initial, final, piece)
+    piece.moves << pos_string
+    set_chess_piece(final, piece)
+  end
+
   private
 
   def build
@@ -53,5 +64,30 @@ class Board
       tile.piece = Object.const_get(keys[index].to_s.downcase.capitalize).new(color)
     end
     @board[index2].each { |tile| tile.piece = Pawn.new(color) }
+  end
+
+  def get_chess_piece(initial)
+    x_init, y_init = initial
+    piece = board[y_init][x_init].piece
+    return nil if piece.nil?
+    board[y_init][x_init].piece = nil
+    piece
+  end
+
+  def set_chess_piece(final, piece)
+    x_fin, y_fin = final
+    board[y_fin][x_fin].piece = piece
+  end
+
+  def invalid_move?(initial, final, piece)
+    x_init, y_init = initial
+    x_fin, y_fin = final
+    mv = [x_fin - x_init, y_init - y_fin]
+    if piece.class.to_s == "Pawn" && piece.moves.empty?
+      return true unless piece.moveset[1..-1].include?(mv)
+    else
+      return true unless piece.moveset.include?(mv)
+    end
+    false
   end
 end

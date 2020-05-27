@@ -44,48 +44,6 @@ class ChessPiece
     @alive = true
     @moves = []
   end
-
-  public
-
-  def move(pos_string, board) #as long as move is valid
-    letters = ('a'..'h').to_a
-    initial, final = pos_string.downcase.split(':')
-    return nil unless valid_move?(initial, final, letters)
-    moves << pos_string
-    piece = get_chess_piece(initial, board, letters)
-    set_chess_piece(final, piece, board, letters)
-  end
-
-  private
-  
-  #refactor x_init, y_init, x_fin, y_fin
-  def get_chess_piece(initial, board, letters)
-    x_init = letters.index(initial[0])
-    y_init = (initial[1].to_i - 8).abs
-    piece = board[x_init][y_init].piece
-    board[y_init][x_init].piece = nil
-    piece
-  end
-
-  def set_chess_piece(final, piece, board, letters)
-    x_fin = letters.index(final[0])
-    y_fin = (final[1].to_i - 8).abs
-    board[y_fin][x_fin].piece = piece
-  end
-
-  def valid_move?(initial, final, letters)
-    x_init = letters.index(initial[0])
-    y_init = (initial[1].to_i - 8).abs
-    x_fin = letters.index(final[0])
-    y_fin = (final[1].to_i - 8).abs
-    mv = [x_fin - x_init, y_init - y_fin]
-    if self.class.to_s == "Pawn" && moves.empty?
-      return false unless moveset[1..-1].include?(mv)
-    else
-      return false unless moveset.include?(mv)
-    end
-    true
-  end
 end
 
 WHITE.each_key do |key|

@@ -96,8 +96,10 @@ class Board
   def return_move(x_init, y_init, x_fin, y_fin, piece)
     special_pieces = ["Rook", "Bishop", "Queen"]
     mv = [x_fin - x_init, y_init - y_fin]
-    max = mv.max > mv.min.abs ? mv.max : mv.min.abs
-    return mv.map { |i| i/max } if special_pieces.include?(piece.class.to_s)
+    min = mv.max < mv.min.abs ? mv.max : mv.min.abs
+    if special_pieces.include?(piece.class.to_s)
+      return mv.map { |i| i >= 0 ? (i - min + 1) : (i.abs - min + 1) * -1 }
+    end
     mv
   end
 

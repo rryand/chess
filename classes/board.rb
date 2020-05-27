@@ -32,6 +32,7 @@ class Board
     final = [letters.index(final[0]), (final[1].to_i - 8).abs]
     piece = get_chess_piece(initial)
     return nil if piece.nil? || invalid_move?(initial, final, piece)
+    remove_chess_piece(initial)
     piece.moves << pos_string
     set_chess_piece(final, piece)
   end
@@ -68,10 +69,12 @@ class Board
 
   def get_chess_piece(initial)
     x_init, y_init = initial
-    piece = board[y_init][x_init].piece
-    return nil if piece.nil?
+    board[y_init][x_init].piece
+  end
+
+  def remove_chess_piece(initial)
+    x_init, y_init = initial
     board[y_init][x_init].piece = nil
-    piece
   end
 
   def set_chess_piece(final, piece)
@@ -92,13 +95,15 @@ class Board
   end
 
   def outside_moveset?(x_fin, y_fin, move, piece)
-    if piece.class.to_s == "Pawn"
+    klass = piece.class.to_s
+    if klass == "Pawn"
       if piece.moveset[-2..-1].include?(move)
         return true if board[y_fin][x_fin].piece.nil?
-      elsif piece.moves.empty?
+      elsif !piece.moves.empty?
         return true unless piece.moveset[1..-1].include?(move)
       end
     end
+    move = move.map { |i| i/move.max } if ["Rook", "Bishop", "Queen"].include?(klass)
     return true unless piece.moveset.include?(move)
     false
   end

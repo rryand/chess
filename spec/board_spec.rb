@@ -48,5 +48,17 @@ describe Board do
       board.move("b2:b3")
       expect(board.move("a2:b3")).to be_nil
     end
+
+    it "moves bishop diagonally" do
+      board.move("d2:d4")
+      board.move("d7:d5")
+      board.move("c1:f4")
+    end
+
+    it "returns nil if bishop has invalid move" do
+      board.move("d2:d4")
+      board.move("d7:d5")
+      expect(board.move("c1:f5")).to be_nil
+    end
   end
 end

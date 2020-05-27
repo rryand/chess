@@ -29,7 +29,6 @@ describe Board do
   describe "#move" do
     it "moves pawn 1 square forward" do
       board.move("a2:a3")
-      board.draw
       expect(board.board[5][0].piece).to_not be_nil
     end
 
@@ -39,6 +38,15 @@ describe Board do
 
     it "returns nil if there is no chess piece" do
       expect(board.move("a3:a6")).to be_nil
+    end
+
+    it "returns nil if pawn attempts to move diagonally" do
+      expect(board.move("a2:b3")).to be_nil
+    end
+
+    it "returns nil if capturing friendly unit" do
+      board.move("b2:b3")
+      expect(board.move("a2:b3")).to be_nil
     end
   end
 end

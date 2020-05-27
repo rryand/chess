@@ -76,6 +76,9 @@ class Board
 
   def set_chess_piece(final, piece)
     x_fin, y_fin = final
+    
+    # add captured chess pieces to own instance variable
+
     board[y_fin][x_fin].piece = piece
   end
 
@@ -83,11 +86,19 @@ class Board
     x_init, y_init = initial
     x_fin, y_fin = final
     mv = [x_fin - x_init, y_init - y_fin]
-    if piece.class.to_s == "Pawn" && piece.moves.empty?
-      return true unless piece.moveset[1..-1].include?(mv)
-    else
-      return true unless piece.moveset.include?(mv)
+    outside_moveset(x_fin, y_fin, mv, piece)
+    # add #collision and #friendly_fire
+  end
+
+  def outside_moveset(x_fin, y_fin, move, piece)
+    if piece.class.to_s == "Pawn"
+      if piece.moveset[-2..-1].include?(move)
+        return true if board[y_fin][x_fin].piece.nil?
+      elsif piece.moves.empty?
+        return true unless piece.moveset[1..-1].include?(move)
+      end
     end
+    return true unless piece.moveset.include?(move)
     false
   end
 end

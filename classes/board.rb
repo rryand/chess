@@ -88,22 +88,27 @@ class Board
   def invalid_move?(initial, final, piece)
     x_init, y_init = initial
     x_fin, y_fin = final
-    mv = [x_fin - x_init, y_init - y_fin]
+    mv = return_move(x_init, y_init, x_fin, y_fin, piece)
     outside_moveset?(x_fin, y_fin, mv, piece) || 
-    friendly_fire?(piece, board[y_fin][x_fin].piece)
-    # add #collision
+    friendly_fire?(piece, board[y_fin][x_fin].piece) 
+  end
+
+  def return_move(x_init, y_init, x_fin, y_fin, piece)
+    special_pieces = ["Rook", "Bishop", "Queen"]
+    mv = [x_fin - x_init, y_init - y_fin]
+    max = mv.max > mv.min.abs ? mv.max : mv.min.abs
+    return mv.map { |i| i/max } if special_pieces.include?(piece.class.to_s)
+    mv
   end
 
   def outside_moveset?(x_fin, y_fin, move, piece)
-    klass = piece.class.to_s
-    if klass == "Pawn"
+    if piece.class.to_s == "Pawn"
       if piece.moveset[-2..-1].include?(move)
         return true if board[y_fin][x_fin].piece.nil?
       elsif !piece.moves.empty?
         return true unless piece.moveset[1..-1].include?(move)
       end
     end
-    move = move.map { |i| i/move.max } if ["Rook", "Bishop", "Queen"].include?(klass)
     return true unless piece.moveset.include?(move)
     false
   end

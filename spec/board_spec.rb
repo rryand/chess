@@ -60,5 +60,14 @@ describe Board do
       board.move("d7:d5")
       expect(board.move("c1:f5")).to be_nil
     end
+
+    it "returns nil if collision is detected" do
+      board.move("d2:d4")
+      board.move("d7:d5")
+      board.move("c1:f4")
+      board.move("e7:e5")
+      board.draw
+      expect(board.move("f4:d6")).to be_nil
+    end
   end
 end

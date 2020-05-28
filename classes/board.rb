@@ -27,13 +27,15 @@ class Board
     puts
   end
 
-  def move(pos_string) #as long as move is valid
+  def move(pos_string, player) #as long as move is valid
+    pos_string = pos_string.downcase
+    return nil unless pos_string.match(/^[a-h]\d:[a-h]\d$/)
     letters = ('a'..'h').to_a
-    initial, final = pos_string.downcase.split(':')
+    initial, final = pos_string.split(':')
     initial = [letters.index(initial[0]), (initial[1].to_i - 8).abs]
     final = [letters.index(final[0]), (final[1].to_i - 8).abs]
     piece = get_chess_piece(initial)
-    return nil if piece.nil? || invalid_move?(initial, final, piece)
+    return nil if piece.nil? || invalid_color?(piece, player) || invalid_move?(initial, final, piece)
     remove_chess_piece(initial)
     piece.moves << pos_string
     set_chess_piece(final, piece)
@@ -85,6 +87,10 @@ class Board
     # add captured chess pieces to own instance variable
 
     board[y_fin][x_fin].piece = piece
+  end
+
+  def invalid_color?(piece, player)
+    piece.color != player
   end
 
   def invalid_move?(initial, final, piece)

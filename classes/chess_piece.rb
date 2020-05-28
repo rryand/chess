@@ -59,7 +59,7 @@ WHITE.each_key do |key|
       when :QUEEN
         @moveset = MOVESET[:ROOK] + MOVESET[:BISHOP]
       when :KING
-        @moveset = MOVESET[:ROOK]
+        @moveset = MOVESET[:ROOK] + MOVESET[:BISHOP]
       else
         @moveset = MOVESET[key]
       end

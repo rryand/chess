@@ -36,7 +36,7 @@ class Game
     loop do
       initial, final = string_to_coordinates(get_input)
       piece = board.get_chess_piece(initial)
-      p initial, final, piece
+      #p initial, final, piece
       break unless invalid_move?(initial, final, piece)
     end
     puts "moving!"
@@ -62,48 +62,13 @@ class Game
   end
 
   def invalid_move?(initial, final, piece)
-    x_init, y_init = initial
-    x_fin, y_fin = final
-    mv = return_move(x_init, y_init, x_fin, y_fin, piece)
-    piece.nil? || invalid_color?(piece) || !within_board?(initial, final) || 
-    outside_moveset?(x_fin, y_fin, mv, piece) || 
-    friendly_fire?(x_fin, y_fin, piece)
-  end
-
-  def return_move(x_init, y_init, x_fin, y_fin, piece)
-    special_pieces = ["Rook", "Bishop", "Queen"]
-    mv = [x_fin - x_init, y_fin - y_init]
-    min = mv.max < mv.min.abs ? mv.max : mv.min.abs
-    if special_pieces.include?(piece.class.to_s)
-      return mv.map { |i| i >= 0 ? (i - min + 1) : (i.abs - min + 1) * -1 }
-    end
-    mv
+    #p piece.possible_moves(initial, board.board)
+    piece.nil? || invalid_color?(piece) || 
+    !piece.possible_moves(initial, board.board).include?(final)
   end
 
   def invalid_color?(piece)
     piece.color != player
-  end
-
-  def within_board?(initial, final)
-    [initial, final].all? { |arr| arr.all? { |pos| pos.between?(0, 7) } }
-  end
-
-  def outside_moveset?(x_fin, y_fin, move, piece)
-    if piece.class.to_s == "Pawn"
-      if piece.moveset[-2..-1].include?(move)
-        return true if board[y_fin][x_fin].piece.nil?
-      elsif !piece.moves.empty?
-        return true unless piece.moveset[1..-1].include?(move)
-      end
-    end
-    return true unless piece.moveset.include?(move)
-    false
-  end
-
-  def friendly_fire?(x_fin, y_fin, piece)
-    captured_piece = board.board[y_fin][x_fin].piece
-    return false if captured_piece.nil?
-    piece.color == captured_piece.color ? true : false
   end
 
   def game_over?

@@ -1,12 +1,10 @@
 require_relative "tile"
 require_relative "chess_piece"
-require_relative "../modules/collision_check"
 
 BG_BLACK = "\e[40m   \e[0m"
 BG_WHITE = "\e[47m   \e[0m"
 
 class Board
-  #include CollisionCheck
   attr_accessor :board
 
   def initialize
@@ -36,22 +34,6 @@ class Board
     x_init, y_init = initial
     board[y_init][x_init].piece
   end
-
-=begin
-  def move(pos_string, player) #as long as move is valid
-    pos_string = pos_string.downcase
-    return nil unless pos_string.match?(/^[a-h]\d:[a-h]\d$/)
-    letters = ('a'..'h').to_a
-    initial, final = pos_string.split(':')
-    initial = [letters.index(initial[0]), (initial[1].to_i - 8).abs]
-    final = [letters.index(final[0]), (final[1].to_i - 8).abs]
-    piece = get_chess_piece(initial)
-    return nil if piece.nil? || invalid_color?(piece, player) || invalid_move?(initial, final, piece)
-    remove_chess_piece(initial)
-    piece.moves << pos_string
-    set_chess_piece(final, piece)
-  end
-=end
 
   private
 
@@ -95,16 +77,4 @@ class Board
 
     board[y_fin][x_fin].piece = piece
   end
-
-=begin
-  def invalid_move?(initial, final, piece)
-    x_init, y_init = initial
-    x_fin, y_fin = final
-    return true unless [x_init, y_init, x_fin, y_fin].all? { |pos| pos.between?(0, 8) }
-    mv = return_move(x_init, y_init, x_fin, y_fin, piece)
-    outside_moveset?(x_fin, y_fin, mv, piece) || 
-    friendly_fire?(piece, board[y_fin][x_fin].piece) ||
-    collision(initial, final, mv, piece)
-  end
-=end
 end

@@ -6,7 +6,7 @@ BG_BLACK = "\e[40m   \e[0m"
 BG_WHITE = "\e[47m   \e[0m"
 
 class Board
-  include CollisionCheck
+  #include CollisionCheck
   attr_accessor :board
 
   def initialize
@@ -97,10 +97,6 @@ class Board
   end
 
 =begin
-  def invalid_color?(piece, player)
-    piece.color != player
-  end
-
   def invalid_move?(initial, final, piece)
     x_init, y_init = initial
     x_fin, y_fin = final
@@ -109,33 +105,6 @@ class Board
     outside_moveset?(x_fin, y_fin, mv, piece) || 
     friendly_fire?(piece, board[y_fin][x_fin].piece) ||
     collision(initial, final, mv, piece)
-  end
-
-  def return_move(x_init, y_init, x_fin, y_fin, piece)
-    special_pieces = ["Rook", "Bishop", "Queen"]
-    mv = [x_fin - x_init, y_init - y_fin]
-    min = mv.max < mv.min.abs ? mv.max : mv.min.abs
-    if special_pieces.include?(piece.class.to_s)
-      return mv.map { |i| i >= 0 ? (i - min + 1) : (i.abs - min + 1) * -1 }
-    end
-    mv
-  end
-
-  def outside_moveset?(x_fin, y_fin, move, piece)
-    if piece.class.to_s == "Pawn"
-      if piece.moveset[-2..-1].include?(move)
-        return true if board[y_fin][x_fin].piece.nil?
-      elsif !piece.moves.empty?
-        return true unless piece.moveset[1..-1].include?(move)
-      end
-    end
-    return true unless piece.moveset.include?(move)
-    false
-  end
-
-  def friendly_fire?(piece, captured_piece)
-    return false if captured_piece.nil?
-    piece.color == captured_piece.color ? true : false
   end
 =end
 end

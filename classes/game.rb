@@ -65,8 +65,9 @@ class Game
     x_init, y_init = initial
     x_fin, y_fin = final
     mv = return_move(x_init, y_init, x_fin, y_fin, piece)
-    piece.nil? || !within_board?(initial, final) || 
-    outside_moveset?(x_fin, y_fin, mv, piece)
+    piece.nil? || invalid_color?(piece) || !within_board?(initial, final) || 
+    outside_moveset?(x_fin, y_fin, mv, piece) || 
+    friendly_fire?(x_fin, y_fin, piece)
   end
 
   def return_move(x_init, y_init, x_fin, y_fin, piece)
@@ -77,6 +78,10 @@ class Game
       return mv.map { |i| i >= 0 ? (i - min + 1) : (i.abs - min + 1) * -1 }
     end
     mv
+  end
+
+  def invalid_color?(piece)
+    piece.color != player
   end
 
   def within_board?(initial, final)
@@ -93,6 +98,12 @@ class Game
     end
     return true unless piece.moveset.include?(move)
     false
+  end
+
+  def friendly_fire?(x_fin, y_fin, piece)
+    captured_piece = board.board[y_fin][x_fin].piece
+    return false if captured_piece.nil?
+    piece.color == captured_piece.color ? true : false
   end
 
   def game_over?

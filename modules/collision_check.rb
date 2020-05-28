@@ -36,7 +36,7 @@ module CollisionCheck
     if piece.moveset[0] == move
       return true unless board[y2 - (y1.abs)/y1][x1].piece.nil? && board[y2 - y1][x1].piece.nil?
     elsif piece.moveset[1] == move
-      return true unless board[y2 - y1][x1].piece.nil?
+      return true unless board[y2 - y1][x2].piece.nil?
     end
     false
   end

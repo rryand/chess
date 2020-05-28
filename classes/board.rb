@@ -90,6 +90,7 @@ class Board
   def invalid_move?(initial, final, piece)
     x_init, y_init = initial
     x_fin, y_fin = final
+    return true unless [x_init, y_init, x_fin, y_fin].all? { |pos| pos.between?(0, 8) }
     mv = return_move(x_init, y_init, x_fin, y_fin, piece)
     outside_moveset?(x_fin, y_fin, mv, piece) || 
     friendly_fire?(piece, board[y_fin][x_fin].piece) ||

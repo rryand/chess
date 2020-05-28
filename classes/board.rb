@@ -16,7 +16,7 @@ class Board
   public
 
   def draw
-    board.each_with_index do |arr, index|
+    board.reverse.each_with_index do |arr, index|
       print "#{(index - 8).abs}|"
       arr.each { |tile| print tile.string }
       puts
@@ -27,9 +27,20 @@ class Board
     puts
   end
 
+  def move(initial, final, piece)
+    remove_chess_piece(initial)
+    set_chess_piece(final, piece)
+  end
+
+  def get_chess_piece(initial)
+    x_init, y_init = initial
+    board[y_init][x_init].piece
+  end
+
+=begin
   def move(pos_string, player) #as long as move is valid
     pos_string = pos_string.downcase
-    return nil unless pos_string.match(/^[a-h]\d:[a-h]\d$/)
+    return nil unless pos_string.match?(/^[a-h]\d:[a-h]\d$/)
     letters = ('a'..'h').to_a
     initial, final = pos_string.split(':')
     initial = [letters.index(initial[0]), (initial[1].to_i - 8).abs]
@@ -40,13 +51,14 @@ class Board
     piece.moves << pos_string
     set_chess_piece(final, piece)
   end
+=end
 
   private
 
   def build
     @board = build_board
-    place_pieces(BLACK, 0, 1)
-    place_pieces(WHITE, 7, 6)
+    place_pieces(WHITE, 0, 1)
+    place_pieces(BLACK, 7, 6)
   end
 
   def build_board
@@ -71,11 +83,6 @@ class Board
     @board[index2].each { |tile| tile.piece = Pawn.new(color) }
   end
 
-  def get_chess_piece(initial)
-    x_init, y_init = initial
-    board[y_init][x_init].piece
-  end
-
   def remove_chess_piece(initial)
     x_init, y_init = initial
     board[y_init][x_init].piece = nil
@@ -89,6 +96,7 @@ class Board
     board[y_fin][x_fin].piece = piece
   end
 
+=begin
   def invalid_color?(piece, player)
     piece.color != player
   end
@@ -129,4 +137,5 @@ class Board
     return false if captured_piece.nil?
     piece.color == captured_piece.color ? true : false
   end
+=end
 end

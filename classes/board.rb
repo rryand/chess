@@ -3,6 +3,11 @@ require_relative "chess_piece"
 
 BG_BLACK = "\e[40m   \e[0m"
 BG_WHITE = "\e[47m   \e[0m"
+HL = {
+  INITIAL: "\e[44m   \e[0m",
+  BLANK: "\e[42m   \e[0m",
+  ENEMY: "\e[41m   \e[0m"
+}
 
 class Board
   attr_accessor :board
@@ -33,6 +38,20 @@ class Board
   def get_chess_piece(initial)
     x_init, y_init = initial
     board[y_init][x_init].piece
+  end
+
+  def highlight_moves(piece, initial)
+    coordinates = piece.possible_moves(initial, board)
+    board[initial[1]][initial[0]].highlight = HL[:INITIAL]
+    coordinates.each do |pos|
+      x, y = pos
+      enemy_piece = board[y][x].piece
+      board[y][x].highlight = enemy_piece.nil? ? HL[:BLANK] : HL[:ENEMY]
+    end
+  end
+
+  def reset_highlights
+    board.flatten.each { |tile| tile.highlight = nil }
   end
 
   private
@@ -76,6 +95,7 @@ class Board
     
     # add captured chess pieces to own instance variable
 
+    board[y_fin][x_fin].piece = nil
     board[y_fin][x_fin].piece = piece
   end
 end

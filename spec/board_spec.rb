@@ -35,33 +35,33 @@ describe Board do
       color = :white
 
       it "moves pawn 1 square forward" do
-        board.move("a2:a3", color)
+        board.move("a2:a3")
         expect(board.board[5][0].piece).to_not be_nil
       end
 
       it "returns nil if invalid move" do
-        expect(board.move("a2:a5", color)).to be_nil
+        expect(board.move("a2:a5")).to be_nil
       end
 
       it "returns nil if pawn attempts to move diagonally" do
-        expect(board.move("a2:b3", color)).to be_nil
+        expect(board.move("a2:b3")).to be_nil
       end
 
       it "returns nil if capturing friendly unit" do
         board.move("b2:b3")
-        expect(board.move("a2:b3", color)).to be_nil
+        expect(board.move("a2:b3")).to be_nil
       end
 
       it "moves bishop diagonally" do
         board.move("d2:d4")
         board.move("d7:d5")
-        expect(board.move("c1:f4", color)).to_not be_nil
+        expect(board.move("c1:f4")).to_not be_nil
       end
 
-      it "returns nil if bishop has , colorinvalid move" do
+      it "returns nil if bishop has invalid move" do
         board.move("d2:d4")
         board.move("d7:d5")
-        expect(board.move("c1:f5", color)).to be_nil
+        expect(board.move("c1:f5")).to be_nil
       end
 
       it "returns nil if special piece collision is detected" do
@@ -69,14 +69,14 @@ describe Board do
         board.move("d7:d5")
         board.move("c1:f4")
         board.move("e7:e5")
-        expect(board.move("f4:d6", color)).to be_nil
+        expect(board.move("f4:d6")).to be_nil
       end
 
       it "returns nil if pawn collision is detected" do
         board.move("c2:c4")
         board.move("c7:c5")
         board.draw
-        expect(board.move("c4:c5", color)).to be_nil
+        expect(board.move("c4:c5")).to be_nil
       end
     end
 
@@ -84,30 +84,30 @@ describe Board do
       color = :black
       
       it "moves pawn 1 square forward" do
-        board.move("c7:c6", color)
+        board.move("c7:c6")
         expect(board.board[2][2].piece).to_not be_nil
       end
 
       it "returns nil if invalid move" do
-        expect(board.move("c7:c4", color)).to be_nil
+        expect(board.move("c7:c4")).to be_nil
       end
 
       it "returns nil if pawn moves diagonally" do
-        expect(board.move("c7:b6", color)).to be_nil
+        expect(board.move("c7:b6")).to be_nil
       end
 
       it "returns nil if bishop has invalid move" do
         board.move("d2:d4")
         board.move("d7:d5")
         board.move("c2:c3")
-        expect(board.move("c8:f6", color)).to be_nil
+        expect(board.move("c8:f6")).to be_nil
       end
 
       it "moves bishop diagonally" do
         board.move("d2:d4")
         board.move("d7:d5")
         board.move("c2:c3")
-        expect(board.move("c8:f5", color)).to_not be_nil
+        expect(board.move("c8:f5")).to_not be_nil
       end
     end
   end

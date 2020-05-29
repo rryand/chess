@@ -12,7 +12,7 @@ class Game
 
   def play
     until game_over?
-      #clear_screen
+      clear_screen
       puts '-' * 40, "r_chess".center(40), '-' * 40
       play_turn
       switch_player

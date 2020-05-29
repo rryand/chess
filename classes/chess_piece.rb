@@ -50,6 +50,7 @@ WHITE.each_key do |key|
   klass_name = key.to_s.downcase.capitalize
   klass = Class.new(ChessPiece) do
     attr_reader :char, :moveset
+    #attr_accessor :checked if key == :KING
 
     define_method(:initialize) do |color|
       @char = color == :white ? WHITE[key] : BLACK[key]
@@ -69,18 +70,18 @@ WHITE.each_key do |key|
     define_method(:possible_moves) do |initial, board|
       special_pieces = [:BISHOP, :ROOK, :QUEEN]
       possible_moves = []
-      #x, y = initial
       ms = @moveset
       ms = ms[1..-1] unless moves.empty? && key == :PAWN
       ms.each do |move|
-        x,y = initial
+        x, y = initial
         x += move[0]
         y += move[1]
         loop do
           break unless [x, y].all? { |i| i.between?(0, 7) }
           piece = board[y][x].piece
           break if key == :PAWN && ms[-2..-1].include?(move) && (piece.nil? || piece.color == color)
-          possible_moves << [x, y] if piece.nil? || (piece.color != color && key != :PAWN)
+          break if key == :KING && check?(board, [x, y])
+          possible_moves << [x, y] if (key != :PAWN && piece.color != color) || piece.nil?
           #p [x, y]
           break if piece || !special_pieces.include?(key)
           x += move[0]
@@ -88,6 +89,24 @@ WHITE.each_key do |key|
         end
       end
       possible_moves
+    end
+
+    if key == :KING
+      define_method(:check?) do |board, pos|
+        board.each_with_index do |arr, y|
+          arr.each_with_index do |tile, x|
+            piece = tile.piece
+            next if piece.nil? || piece.color == color
+            if piece.instance_of? Pawn
+              return true if piece.possible_moves.any? do |move|
+                move[0] != pos[0] && move == pos
+              end
+            else
+              return true if piece.possible_moves.include? pos
+            end
+          end
+        end
+      end
     end
   end
   Object.const_set(klass_name, klass)

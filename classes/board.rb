@@ -7,8 +7,8 @@ BG_WHITE = "\e[47m   \e[0m"
 class Board
   attr_accessor :board
 
-  def initialize
-    build
+  def initialize(test = false)
+    build(test)
   end
 
   public
@@ -37,8 +37,9 @@ class Board
 
   private
 
-  def build
+  def build(test)
     @board = build_board
+    return if test == true
     place_pieces(WHITE, 0, 1)
     place_pieces(BLACK, 7, 6)
   end

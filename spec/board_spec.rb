@@ -26,6 +26,9 @@ describe Board do
     end
   end
 
+=begin
+  --BEFORE OVERHAUL IN MOVE SYSTEM--
+
   describe "#move" do
     it "returns nil if there is no chess piece" do
       expect(board.move("a3:a6")).to be_nil
@@ -56,7 +59,7 @@ describe Board do
         board.move("d2:d4")
         board.move("d7:d5")
         expect(board.move("c1:f4")).to_not be_nil
-      end
+     =end end
 
       it "returns nil if bishop has invalid move" do
         board.move("d2:d4")
@@ -111,4 +114,5 @@ describe Board do
       end
     end
   end
+=end
 end

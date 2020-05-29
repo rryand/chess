@@ -71,18 +71,17 @@ WHITE.each_key do |key|
       special_pieces = [:BISHOP, :ROOK, :QUEEN]
       possible_moves = []
       ms = @moveset
-      ms = ms[1..-1] unless moves.empty? && key == :PAWN
+      ms = ms[1..-1] if key == :PAWN && !moves.empty? 
       ms.each do |move|
         x, y = initial
         x += move[0]
         y += move[1]
         loop do
-          break unless [x, y].all? { |i| i.between?(0, 7) }
+          break unless x.between?(0, 7) && y.between?(0, 7) #outside board
           piece = board[y][x].piece
           break if key == :PAWN && ms[-2..-1].include?(move) && (piece.nil? || piece.color == color)
-          break if key == :KING && check?(board, [x, y])
-          possible_moves << [x, y] if (key != :PAWN && piece.color != color) || piece.nil?
-          #p [x, y]
+          break if key == :KING && check?(board, [x, y]) #king can't move into zone of attack
+          possible_moves << [x, y] if piece.nil? || piece.color != color
           break if piece || !special_pieces.include?(key)
           x += move[0]
           y += move[1]
@@ -92,20 +91,21 @@ WHITE.each_key do |key|
     end
 
     if key == :KING
-      define_method(:check?) do |board, pos|
-        board.each_with_index do |arr, y|
-          arr.each_with_index do |tile, x|
+      define_method(:check?) do |board, pos| #impelement in Game class
+        board.each_with_index do |row, y|
+          row.each_with_index do |tile, x|
             piece = tile.piece
             next if piece.nil? || piece.color == color
             if piece.instance_of? Pawn
-              return true if piece.possible_moves.any? do |move|
-                move[0] != pos[0] && move == pos
+              return true if piece.possible_moves([x, y], board).any? do |move|
+                move[0] != x && move == pos
               end
             else
-              return true if piece.possible_moves.include? pos
+              return true if piece.possible_moves([x, y], board).include? pos
             end
           end
         end
+        false
       end
     end
   end

@@ -67,6 +67,8 @@ WHITE.each_key do |key|
       super(color)
     end
 
+    public
+
     define_method(:possible_moves) do |initial, board|
       special_pieces = [:BISHOP, :ROOK, :QUEEN]
       possible_moves = []
@@ -79,8 +81,7 @@ WHITE.each_key do |key|
         loop do
           break unless x.between?(0, 7) && y.between?(0, 7) #outside board
           piece = board[y][x].piece
-          break if key == :PAWN && ms[-2..-1].include?(move) && (piece.nil? || piece.color == color)
-          break if key == :PAWN && !ms[-2..-1].include?(move) && piece
+          break if key == :PAWN && invalid_move?(move, ms, piece)
           break if key == :KING && check?(board, [x, y]) #king can't move into zone of attack
           possible_moves << [x, y] if piece.nil? || piece.color != color
           break if piece || !special_pieces.include?(key)
@@ -107,6 +108,15 @@ WHITE.each_key do |key|
           end
         end
         false
+      end
+    end
+
+    private
+
+    if key == :PAWN
+      define_method(:invalid_move?) do |move, ms, piece|
+        (ms[-2..-1].include?(move) && (piece.nil? || piece.color == color)) ||
+        (!ms[-2..-1].include?(move) && piece)
       end
     end
   end

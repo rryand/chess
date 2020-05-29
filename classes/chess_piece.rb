@@ -81,7 +81,8 @@ WHITE.each_key do |key|
         loop do
           break unless x.between?(0, 7) && y.between?(0, 7) #outside board
           piece = board[y][x].piece
-          break if key == :PAWN && invalid_move?(move, ms, piece)
+          break if key == :PAWN && (invalid_move?(move, ms, piece) || 
+                   double_move_block?(move, board, initial))
           break if key == :KING && check?(board, [x, y]) #king can't move into zone of attack
           possible_moves << [x, y] if piece.nil? || piece.color != color
           break if piece || !special_pieces.include?(key)
@@ -117,6 +118,11 @@ WHITE.each_key do |key|
       define_method(:invalid_move?) do |move, ms, piece|
         (ms[-2..-1].include?(move) && (piece.nil? || piece.color == color)) ||
         (!ms[-2..-1].include?(move) && piece)
+      end
+
+      define_method(:double_move_block?) do |move, board, initial|
+        x, y = initial
+        move == moveset[0] && !board[y + moveset[1][1]][x].piece.nil?
       end
     end
   end

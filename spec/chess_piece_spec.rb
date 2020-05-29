@@ -4,6 +4,16 @@ require_relative "../classes/board"
 describe Pawn do
   let(:board) { Board.new }
 
+  context "double move blocking" do
+    let(:board) { Board.new(true) }
+    it "blocks double move" do
+      pawn = Pawn.new(:white)
+      board.board[3][3].piece = pawn
+      board.board[4][3].piece = Pawn.new(:black)
+      expect(pawn.possible_moves([3, 3], board.board)).to be_empty
+    end
+  end
+
   context "white pieces" do
     it "creates a pawn piece" do
       pawn = Pawn.new(:white)

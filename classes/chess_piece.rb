@@ -80,6 +80,7 @@ WHITE.each_key do |key|
           break unless x.between?(0, 7) && y.between?(0, 7) #outside board
           piece = board[y][x].piece
           break if key == :PAWN && ms[-2..-1].include?(move) && (piece.nil? || piece.color == color)
+          break if key == :PAWN && !ms[-2..-1].include?(move) && piece
           break if key == :KING && check?(board, [x, y]) #king can't move into zone of attack
           possible_moves << [x, y] if piece.nil? || piece.color != color
           break if piece || !special_pieces.include?(key)

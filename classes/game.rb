@@ -47,6 +47,7 @@ class Game
       board.reset_highlights
       break unless invalid_move?(initial, final, piece)
     end
+    piece.moves << final
     board.move(initial, final, piece)
   end
   

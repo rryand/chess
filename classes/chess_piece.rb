@@ -95,11 +95,12 @@ WHITE.each_key do |key|
     end
 
     if key == :KING
-      define_method(:check?) do |board, pos| #impelement in Game class
+      #same_spot = true if used in Game#king_in_check?
+      define_method(:check?) do |board, pos, same_spot = false|
         board.each_with_index do |row, y|
           row.each_with_index do |tile, x|
             piece = tile.piece
-            next if piece.nil? || piece.color == color
+            next if piece.nil? || piece.color == color || (piece.instance_of?(King) && same_spot)
             if piece.instance_of? Pawn
               return true if piece.possible_moves([x, y], board).any? do |move|
                 move[0] != x && move == pos

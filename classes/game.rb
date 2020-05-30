@@ -12,8 +12,6 @@ class Game
 
   def play
     until game_over?
-      #clear_screen
-      #puts '-' * 40, "r_chess".center(40), '-' * 40
       play_turn
       switch_player
     end
@@ -45,7 +43,7 @@ class Game
       puts_display
       final = string_to_coordinates(get_input(:final))
       board.reset_highlights
-      break unless invalid_move?(initial, final, piece)
+      break unless invalid_move?(initial, final, piece) || king_in_check?
     end
     piece.moves << final
     board.move(initial, final, piece)
@@ -79,12 +77,25 @@ class Game
   end
 
   def invalid_move?(initial, final, piece)
-    #p piece.possible_moves(initial, board.board)
     !piece.possible_moves(initial, board.board).include?(final)
   end
 
   def invalid_color?(piece)
     piece.color != player
+  end
+
+  def king_in_check?
+    king = nil; pos = nil
+    board.board.each_with_index do |row, y|
+      row.each_with_index do |tile, x|
+        if tile.piece.instance_of?(King) && tile.piece.color == player
+          king = tile.piece
+          pos = [x, y]
+          break
+        end
+      end
+    end
+    king.check?(board.board, pos, true)
   end
 
   def game_over?

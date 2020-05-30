@@ -10,10 +10,14 @@ HL = {
 }
 
 class Board
-  attr_accessor :board
+  attr_accessor :board, :captured_pieces
 
   def initialize(test = false)
     build(test)
+    @captured_pieces = {
+      white: [],
+      black: []
+    }
   end
 
   public
@@ -54,6 +58,12 @@ class Board
     board.flatten.each { |tile| tile.highlight = nil }
   end
 
+  def captured_pieces_string(color)
+    string = ""
+    captured_pieces[color].each { |piece| string += piece.char }
+    string
+  end
+
   private
 
   def build(test)
@@ -92,9 +102,8 @@ class Board
 
   def set_chess_piece(final, piece)
     x_fin, y_fin = final
-    
-    # add captured chess pieces to own instance variable
-
+    enemy_piece = board[y_fin][x_fin].piece
+    captured_pieces[piece.color] << enemy_piece unless enemy_piece.nil?
     board[y_fin][x_fin].piece = nil
     board[y_fin][x_fin].piece = piece
   end

@@ -102,9 +102,15 @@ class Board
 
   def set_chess_piece(final, piece)
     x_fin, y_fin = final
-    enemy_piece = board[y_fin][x_fin].piece
+    piece.moves << final
+    if piece.instance_of?(Pawn) && piece.en_passant
+      enemy_piece = board[y_fin - piece.moveset[1][1]][x_fin].piece
+      board[y_fin - piece.moveset[1][1]][x_fin].piece = nil
+    else
+      enemy_piece = board[y_fin][x_fin].piece
+      board[y_fin][x_fin].piece = nil
+    end
     captured_pieces[piece.color] << enemy_piece unless enemy_piece.nil?
-    board[y_fin][x_fin].piece = nil
     board[y_fin][x_fin].piece = piece
   end
 end

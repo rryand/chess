@@ -41,6 +41,20 @@ describe Pawn do
       expect(rook.char).to eq(BLACK[:ROOK])
     end
   end
+
+  context "en_passant" do
+    it "captures a pawn" do
+      pawn1 = Pawn.new(:white)
+      pawn2 = Pawn.new(:black)
+      board = Board.new(true)
+      board.board[4][3].piece = pawn1
+      board.board[6][4].piece = pawn2
+      board.move([4, 6], [4, 4], pawn2)
+      pawn1.possible_moves([3, 4], board.board)
+      board.move([3, 4], [4, 5], pawn1)
+      expect(board.board[4][4].piece).to be_nil
+    end
+  end
 end
 
 describe King do

@@ -46,8 +46,8 @@ class Game
       board.reset_highlights
       break unless invalid_move?(initial, final, piece) || king_in_check?
     end
-    piece.moves << final
     board.move(initial, final, piece)
+    reset_en_passant(player, board.board)
   end
   
   def get_initial_move
@@ -105,5 +105,15 @@ class Game
 
   def stalemate?
     false
+  end
+
+  def reset_en_passant(player, board)
+    pawn_tiles = board.flatten.select do |tile| 
+      piece = tile.piece
+      piece.instance_of?(Pawn) && piece.en_passant && piece.color == player
+    end
+    p pawn_tiles
+    gets unless pawn_tiles.empty?
+    pawn_tiles.each { |tile| tile.piece.en_passant = false }
   end
 end

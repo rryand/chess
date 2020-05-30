@@ -28,6 +28,7 @@ class Game
     puts '-' * 40, "r_chess".center(40), '-' * 40
     board.draw
     puts "\e[1;4m#{player.to_s.upcase} turn:\e[0m "
+    puts "Captured pieces: #{board.captured_pieces_string(player)}"
   end
 
   def switch_player
@@ -99,6 +100,10 @@ class Game
   end
 
   def game_over?
+    stalemate?
+  end
+
+  def stalemate?
     false
   end
 end

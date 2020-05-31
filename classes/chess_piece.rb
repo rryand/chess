@@ -52,7 +52,7 @@ WHITE.each_key do |key|
   klass = Class.new(ChessPiece) do
     attr_reader :char, :moveset
     attr_accessor :en_passant if key == :PAWN
-    attr_accessor :castling if key == :KING
+    attr_accessor :castling, :checking_piece if key == :KING
 
     define_method(:initialize) do |color|
       @char = color == :white ? WHITE[key] : BLACK[key]
@@ -64,6 +64,7 @@ WHITE.each_key do |key|
         @moveset = MOVESET[:ROOK] + MOVESET[:BISHOP]
       when :KING
         @moveset = MOVESET[:ROOK] + MOVESET[:BISHOP]
+        @checking_piece = {}
       else
         @moveset = MOVESET[key]
       end
@@ -73,6 +74,7 @@ WHITE.each_key do |key|
     public
 
     define_method(:possible_moves) do |initial, board|
+      board[initial[1]][initial[0]].piece = nil
       special_pieces = [:BISHOP, :ROOK, :QUEEN]
       possible_moves = []
       ms = @moveset
@@ -95,6 +97,7 @@ WHITE.each_key do |key|
       end
       add_en_passant(initial, board, possible_moves) if key == :PAWN
       add_castling(board, possible_moves) if key == :KING
+      board[initial[1]][initial[0]].piece = self
       possible_moves
     end
 
@@ -106,11 +109,17 @@ WHITE.each_key do |key|
             piece = tile.piece
             next if piece.nil? || piece.color == color || (piece.instance_of?(King) && same_spot)
             if piece.instance_of? Pawn
-              return true if piece.possible_moves([x, y], board).any? do |move|
-                move[0] != x && move == pos
+              if piece.possible_moves([x, y], board).any? { |mv| mv[0] != x && mv == pos }
+                @checking_piece[:piece] = piece
+                @checking_piece[:pos] = [x, y]
+                return true
               end
             else
-              return true if piece.possible_moves([x, y], board).include? pos
+              if piece.possible_moves([x, y], board).include? pos
+                @checking_piece[:piece] = piece
+                @checking_piece[:pos] = [x, y]
+                return true
+              end
             end
           end
         end

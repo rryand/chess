@@ -3,8 +3,8 @@ require_relative "board"
 class Game
   attr_reader :board, :player
 
-  def initialize
-    @board = Board.new
+  def initialize(test = false)
+    @board = Board.new(test)
     @player = :white
   end
 
@@ -86,6 +86,11 @@ class Game
   end
 
   def king_in_check?
+    king, pos = get_king_and_pos
+    king.check?(board.board, pos, true)
+  end
+
+  def get_king_and_pos
     king = nil; pos = nil
     board.board.each_with_index do |row, y|
       row.each_with_index do |tile, x|
@@ -96,15 +101,34 @@ class Game
         end
       end
     end
-    king.check?(board.board, pos, true)
+    [king, pos]
   end
 
   def game_over?
-    stalemate?
+    king, pos = get_king_and_pos
+    stalemate? || checkmate?(king, pos)
   end
 
   def stalemate?
     false
+  end
+
+  def checkmate?(king, pos)
+    return false unless king.check?(board.board, pos, true) && 
+                        king.possible_moves(pos, board.board).empty?
+    ch_piece = king.checking_piece[:piece]
+    ch_pos = king.checking_piece[:pos]
+    ch_moves = ch_piece.possible_moves(ch_pos, board.board)
+    board.board.each_with_index do |row, y|
+      row.each_with_index do |tile, x|
+        piece = tile.piece
+        next if piece.nil? || piece.color != king.color || piece.instance_of?(King)
+        piece.possible_moves([x, y], board.board).each do |mv|
+          return false if ch_moves.include?(mv)
+        end
+      end
+    end
+    true
   end
 
   def reset_en_passant(player, board)

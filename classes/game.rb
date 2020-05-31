@@ -106,11 +106,18 @@ class Game
 
   def game_over?
     king, pos = get_king_and_pos
-    stalemate? || checkmate?(king, pos)
+    checkmate?(king, pos) || stalemate?
   end
 
   def stalemate?
-    false
+    board.board.each_with_index do |row, y|
+      row.each_with_index do |tile, x|
+        piece = tile.piece
+        next if piece.nil? || piece.color != player
+        return false unless piece.possible_moves([x, y], board.board).empty?
+      end
+    end
+    true
   end
 
   def checkmate?(king, pos)

@@ -1,7 +1,7 @@
 require_relative "board"
 
 class Game
-  attr_reader :board, :player
+  attr_reader :board, :player, :checkmate
 
   def initialize(test = false)
     @board = Board.new(test)
@@ -15,6 +15,7 @@ class Game
       play_turn
       switch_player
     end
+    puts_display(true)
   end
 
   private
@@ -23,11 +24,16 @@ class Game
     print `clear`
   end
 
-  def puts_display
+  def puts_display(game_over = false)
     clear_screen
     puts '-' * 40, "r_chess".center(40), '-' * 40
     board.draw
-    puts "\e[1;4m#{player.to_s.upcase} turn:\e[0m "
+    puts "Your king is in check!" if king_in_check?
+    if game_over
+      puts checkmate ? "#{player.to_s.capitalize} wins!" : "It's a draw!"
+    else
+      puts "\e[1;4m#{player.to_s.upcase} turn:\e[0m "
+    end
     puts "Captured pieces: #{board.captured_pieces_string(player)}"
   end
 
@@ -44,7 +50,7 @@ class Game
       puts_display
       final = string_to_coordinates(get_input(:final))
       board.reset_highlights
-      break unless invalid_move?(initial, final, piece) || king_in_check?
+      break unless invalid_move?(initial, final, piece) || king_in_check?(piece, initial, final)
     end
     board.move(initial, final, piece)
     reset_en_passant(player, board.board)
@@ -85,9 +91,19 @@ class Game
     piece.color != player
   end
 
-  def king_in_check?
+  def king_in_check?(piece = nil, piece_pos = nil, final = nil)
     king, pos = get_king_and_pos
-    king.check?(board.board, pos, true)
+    if piece
+      board.board[piece_pos[1]][piece_pos[0]].piece = nil
+      piece2 = board.board[final[1]][final[0]].piece
+      board.board[final[1]][final[0]].piece = piece
+    end
+    check = king.check?(board.board, pos, true)
+    if piece
+      board.board[piece_pos[1]][piece_pos[0]].piece = piece
+      board.board[final[1]][final[0]].piece = piece2
+    end
+    check
   end
 
   def get_king_and_pos
@@ -135,6 +151,7 @@ class Game
         end
       end
     end
+    @checkmate = true
     true
   end
 

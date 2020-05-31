@@ -1,8 +1,10 @@
 require_relative "board"
+require_relative "../modules/game_display"
 
 GAME_WIDTH = 40
 
 class Game
+  include GameDisplay
   attr_reader :board, :player, :checkmate
 
   def initialize(test = false)
@@ -22,33 +24,6 @@ class Game
   end
 
   private
-
-  def clear_screen
-    system "clear"
-    system "cls"
-  end
-
-  def puts_display
-    clear_screen
-    puts '-' * GAME_WIDTH, "r_chess".center(GAME_WIDTH), '-' * GAME_WIDTH
-    board.draw
-    puts "\e[1;4m#{player.to_s.upcase} turn:\e[0m "
-    puts "Captured pieces: #{board.captured_pieces_string(player)}"
-    puts "Your king is in check!" if king_in_check?
-  end
-
-  def puts_result_display
-    color = player == :white ? :black : :white
-    result = checkmate ? "#{color.to_s.capitalize} wins" : "It's a draw"
-    clear_screen
-    puts '-' * GAME_WIDTH, "r_chess".center(GAME_WIDTH), '-' * GAME_WIDTH
-    board.draw
-    puts "Captured pieces: #{board.captured_pieces_string(color)}"
-    puts '=' * GAME_WIDTH
-    print "\e[1m", "!!! #{result} !!!".center(GAME_WIDTH), "\e[0m\n"
-    puts '=' * GAME_WIDTH
-    puts "Thank you for playing!".center(GAME_WIDTH)
-  end
 
   def switch_player
     @player = player == :white ? :black : :white

@@ -1,5 +1,7 @@
 require_relative "board"
 
+GAME_WIDTH = 40
+
 class Game
   attr_reader :board, :player, :checkmate
 
@@ -16,25 +18,36 @@ class Game
       switch_player
       break if game_over?
     end
-    puts_display(true)
+    puts_result_display
   end
 
   private
 
   def clear_screen
-    print `clear`
+    system "clear"
+    system "cls"
   end
 
-  def puts_display(game_over = false)
+  def puts_display
     clear_screen
-    puts '-' * 40, "r_chess".center(40), '-' * 40
+    puts '-' * GAME_WIDTH, "r_chess".center(GAME_WIDTH), '-' * GAME_WIDTH
     board.draw
-    if game_over
-      puts checkmate ? "#{player.to_s.capitalize} wins!" : "It's a draw!"
-    else
-      puts "\e[1;4m#{player.to_s.upcase} turn:\e[0m "
-    end
-    puts "Your king is in check!" if king_in_check? && !game_over
+    puts "\e[1;4m#{player.to_s.upcase} turn:\e[0m "
+    puts "Captured pieces: #{board.captured_pieces_string(player)}"
+    puts "Your king is in check!" if king_in_check?
+  end
+
+  def puts_result_display
+    color = player == :white ? :black : :white
+    result = checkmate ? "#{color.to_s.capitalize} wins" : "It's a draw"
+    clear_screen
+    puts '-' * GAME_WIDTH, "r_chess".center(GAME_WIDTH), '-' * GAME_WIDTH
+    board.draw
+    puts "Captured pieces: #{board.captured_pieces_string(color)}"
+    puts '=' * GAME_WIDTH
+    print "\e[1m", "!!! #{result} !!!".center(GAME_WIDTH), "\e[0m\n"
+    puts '=' * GAME_WIDTH
+    puts "Thank you for playing!".center(GAME_WIDTH)
   end
 
   def switch_player

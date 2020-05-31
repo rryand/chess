@@ -52,6 +52,7 @@ WHITE.each_key do |key|
   klass = Class.new(ChessPiece) do
     attr_reader :char, :moveset
     attr_accessor :en_passant if key == :PAWN
+    attr_accessor :castling if key == :KING
 
     define_method(:initialize) do |color|
       @char = color == :white ? WHITE[key] : BLACK[key]
@@ -93,6 +94,7 @@ WHITE.each_key do |key|
         end
       end
       add_en_passant(initial, board, possible_moves) if key == :PAWN
+      add_castling(board, possible_moves) if key == :KING
       possible_moves
     end
 
@@ -113,6 +115,23 @@ WHITE.each_key do |key|
           end
         end
         false
+      end
+
+      define_method(:add_castling) do |board, possible_moves|
+        return unless moves.empty?
+        possible_moves << castling_move(board, :left)
+        possible_moves << castling_move(board, :right)
+        @castling = true
+        possible_moves.compact!
+      end
+
+      define_method(:castling_move) do |board, dir|
+        x_between = dir == :left ? [1, 2, 3] : [5, 6]
+        y = color == :white ? 0 : 7
+        piece = board[y][dir == :left ? 0 : 7].piece
+        return if piece.nil? || !piece.moves.empty? || 
+                  x_between.any? { |x| board[y][x].piece }
+        [dir == :left ? 2 : 6, y]
       end
     end
 

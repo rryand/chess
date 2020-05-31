@@ -58,15 +58,15 @@ describe Pawn do
 end
 
 describe King do
-  before(:each) do
-    x = 3; y = 4
-    @pos = [x, y]
-    @board = Board.new(true)
-    @king = King.new(:black)
-    @board.board[4][3].piece = @king
-  end
-
   describe "#check?" do
+    before(:each) do
+      x = 3; y = 4
+      @pos = [x, y]
+      @board = Board.new(true)
+      @king = King.new(:black)
+      @board.board[4][3].piece = @king
+    end
+
     context "returns false if" do
       it "is in check" do
         @board.board[3][3].piece = Pawn.new(:white)
@@ -97,6 +97,40 @@ describe King do
 
       example "queen checks king" do
         @board.board[7][0].piece = Queen.new(:white)
+      end
+    end
+  end
+
+  describe "#add_castling" do
+    context "white king" do
+      it "does a castling move" do
+        board = Board.new(true)
+        king = King.new(:white)
+        rook = Rook.new(:white)
+        rook2 = Rook.new(:white)
+        board.board[0][4].piece = king
+        board.board[0][7].piece = rook
+        board.board[0][0].piece = rook2
+        board.highlight_moves(king, [4, 0])
+        board.reset_highlights
+        board.move([4, 0], [2, 0], king)
+        expect(board.board[0][3].piece).to_not be_nil
+      end
+    end
+
+    context "black king" do
+      it "it does a castling move" do
+        board = Board.new(true)
+        king = King.new(:black)
+        rook = Rook.new(:black)
+        rook2 = Rook.new(:black)
+        board.board[7][4].piece = king
+        board.board[7][7].piece = rook
+        board.board[7][0].piece = rook2
+        board.highlight_moves(king, [4, 7])
+        board.reset_highlights
+        board.move([4, 7], [2, 7], king)
+        expect(board.board[7][3].piece).to_not be_nil
       end
     end
   end

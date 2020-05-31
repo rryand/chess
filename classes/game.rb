@@ -112,8 +112,6 @@ class Game
       piece = tile.piece
       piece.instance_of?(Pawn) && piece.en_passant && piece.color == player
     end
-    p pawn_tiles
-    gets unless pawn_tiles.empty?
     pawn_tiles.each { |tile| tile.piece.en_passant = false }
   end
 end

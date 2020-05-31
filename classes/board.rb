@@ -106,11 +106,22 @@ class Board
     if piece.instance_of?(Pawn) && piece.en_passant
       enemy_piece = board[y_fin - piece.moveset[1][1]][x_fin].piece
       board[y_fin - piece.moveset[1][1]][x_fin].piece = nil
+    elsif piece.instance_of?(King) && [0, 7].include?(final[1]) && piece.castling
+      do_castling(final, piece, x_fin, y_fin)
     else
       enemy_piece = board[y_fin][x_fin].piece
       board[y_fin][x_fin].piece = nil
     end
     captured_pieces[piece.color] << enemy_piece unless enemy_piece.nil?
     board[y_fin][x_fin].piece = piece
+  end
+
+  def do_castling(final, piece, x_fin, y_fin)
+    dir = board[y_fin][x_fin + 1].piece.nil? ? :left : :right
+      rook_pos = dir == :left ? [x_fin - 2, y_fin] : [x_fin + 1, y_fin]
+      rook = board[rook_pos[1]][rook_pos[0]].piece
+      rook_final = dir == :left ? [3, y_fin] : [5, y_fin]
+      move(rook_pos, rook_final, rook)
+      piece.castling = false
   end
 end

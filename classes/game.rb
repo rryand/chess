@@ -11,9 +11,10 @@ class Game
   public
 
   def play
-    until game_over?
+    loop do 
       play_turn
       switch_player
+      break if game_over?
     end
     puts_display(true)
   end
@@ -28,13 +29,12 @@ class Game
     clear_screen
     puts '-' * 40, "r_chess".center(40), '-' * 40
     board.draw
-    puts "Your king is in check!" if king_in_check?
     if game_over
       puts checkmate ? "#{player.to_s.capitalize} wins!" : "It's a draw!"
     else
       puts "\e[1;4m#{player.to_s.upcase} turn:\e[0m "
     end
-    puts "Captured pieces: #{board.captured_pieces_string(player)}"
+    puts "Your king is in check!" if king_in_check? && !game_over
   end
 
   def switch_player
@@ -147,7 +147,9 @@ class Game
         piece = tile.piece
         next if piece.nil? || piece.color != king.color || piece.instance_of?(King)
         piece.possible_moves([x, y], board.board).each do |mv|
-          return false if ch_moves.include?(mv)
+          if ch_moves.include?(mv)
+            return false unless king_in_check?(piece, [x, y], mv)
+          end
         end
       end
     end

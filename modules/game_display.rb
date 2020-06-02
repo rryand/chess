@@ -17,6 +17,7 @@ module GameDisplay
   def display_turn
     clear_screen
     puts header
+    print turn_text
     board.draw
     puts "\e[1;4m#{player.to_s.upcase} turn:\e[0m "
     unless board.captured_pieces[player].empty?
@@ -44,7 +45,15 @@ module GameDisplay
     clear_screen
     puts header
     puts saves_text(load)
-    files.each_with_index { |file_name, index| puts "\t[#{index}] #{file_name}" }
+    files.each_with_index do |file_name, index|
+      data = YAML.load(File.read("saves/#{file_name}"))
+      player = data[:player].to_s.capitalize
+      black = 16 - data[:board].captured_pieces[:white].size
+      white = 16 - data[:board].captured_pieces[:black].size
+      puts "\t[#{index}] #{file_name}",
+           "\t    Current turn: #{player}",
+           "\t    Remaining: White: #{white} Black: #{black}"
+    end
     puts
   end
 
@@ -60,11 +69,14 @@ module GameDisplay
     GAMETEXT
   end
 
+  def turn_text
+    "'save' to save game | 'exit' to exit game\n\n"
+  end
+
   def welcome_text
     url = "https://www.chess.com/learn-how-to-play-chess"
 
     <<~GAMETEXT
-
     Welcome to rchess! Here, you engage in a battle of
     wits and strategy to determine who is the chess
     grandmaster.
@@ -86,6 +98,7 @@ module GameDisplay
 
   def saves_text(load)
     <<~GAMETEXT
+    'back' to go back to menu | 'exit' to exit game
 
     Choose a save file to #{load ? "load from" : "delete"}:
 

@@ -1,8 +1,9 @@
 require_relative "board"
 require_relative "../modules/game_display"
+require_relative "../modules/save_load"
 
 class Game
-  include GameDisplay
+  include GameDisplay, SaveLoad
   attr_reader :board, :player, :checkmate
 
   def initialize(test = false)
@@ -22,12 +23,14 @@ class Game
     case input
     when 'new'
       play
+    when 'load'
+      load
     when 'exit'
-      return
-    else
       return
     end
   end
+
+  private
 
   def play
     loop do 
@@ -37,8 +40,6 @@ class Game
     end
     display_result
   end
-
-  private
 
   def switch_player
     @player = player == :white ? :black : :white
@@ -62,7 +63,10 @@ class Game
   def get_initial_move
     initial = nil; piece = nil
     loop do
-      initial = string_to_coordinates(get_input(:initial, /^[a-h]\d$/))
+      string = get_input(:initial, /^[a-h]\d$/)
+      save(save_data) if string == 'save'
+      exit if string == 'exit'
+      initial = string_to_coordinates(string)
       piece = board.get_chess_piece(initial)
       break unless piece.nil? || invalid_color?(piece)
     end
@@ -70,6 +74,7 @@ class Game
   end
 
   def get_input(type, match = /\w+/)
+    keywords = ['save', 'exit']
     string = nil
     loop do
       case type
@@ -81,7 +86,7 @@ class Game
         print "Input: "
       end
       string = gets.chomp.downcase
-      break if string.match?(match)
+      break if string.match?(match) || keywords.include?(string)
     end
     string
   end
@@ -172,5 +177,13 @@ class Game
       piece.instance_of?(Pawn) && piece.en_passant && piece.color == player
     end
     pawn_tiles.each { |tile| tile.piece.en_passant = false }
+  end
+
+  def save_data
+    data_hash = {
+      board: @board,
+      player: @player
+    }
+    YAML.dump(data_hash)
   end
 end

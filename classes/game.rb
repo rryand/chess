@@ -24,7 +24,7 @@ class Game
     when 'new'
       play
     when 'load'
-      load
+      load_game
     when 'exit'
       return
     end
@@ -39,6 +39,21 @@ class Game
       break if game_over?
     end
     display_result
+  end
+
+  def load_game
+    files = Dir.children("saves")
+    display_saves(files)
+    input = nil
+    loop do
+      print "Input: "
+      input = gets.chomp
+      exit if input == 'exit'
+      menu if input == 'back'
+      break if input == input.to_i.to_s && input.to_i.between?(0, files.size - 1)
+    end
+    load(files[input.to_i])
+    play
   end
 
   def switch_player
@@ -177,13 +192,5 @@ class Game
       piece.instance_of?(Pawn) && piece.en_passant && piece.color == player
     end
     pawn_tiles.each { |tile| tile.piece.en_passant = false }
-  end
-
-  def save_data
-    data_hash = {
-      board: @board,
-      player: @player
-    }
-    YAML.dump(data_hash)
   end
 end

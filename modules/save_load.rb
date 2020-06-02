@@ -10,7 +10,21 @@ module SaveLoad
     exit
   end
 
+  def load(file_name)
+    data = YAML.load(File.read("saves/#{file_name}"))
+    @board = data[:board]
+    @player = data[:player]
+  end
+
   private
+
+  def save_data
+    data_hash = {
+      board: @board,
+      player: @player
+    }
+    YAML.dump(data_hash)
+  end
 
   def write_to_save_file(data)
     file_name = "rchess_#{Time.now.strftime("%m%d%y_%H%M%S")}.yaml"

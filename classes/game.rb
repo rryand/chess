@@ -1,8 +1,6 @@
 require_relative "board"
 require_relative "../modules/game_display"
 
-GAME_WIDTH = 40
-
 class Game
   include GameDisplay
   attr_reader :board, :player, :checkmate
@@ -14,13 +12,30 @@ class Game
 
   public
 
+  def menu
+    input = nil
+    loop do
+      display_menu
+      input = get_input(:menu)
+      break if ['new', 'load', 'exit'].include?(input)
+    end
+    case input
+    when 'new'
+      play
+    when 'exit'
+      return
+    else
+      return
+    end
+  end
+
   def play
     loop do 
       play_turn
       switch_player
       break if game_over?
     end
-    puts_result_display
+    display_result
   end
 
   private
@@ -32,11 +47,11 @@ class Game
   def play_turn
     initial, final, piece = [nil, nil, nil]
     loop do
-      puts_display
+      display_turn
       initial, piece = get_initial_move
       board.highlight_moves(piece, initial)
-      puts_display
-      final = string_to_coordinates(get_input(:final))
+      display_turn
+      final = string_to_coordinates(get_input(:final, /^[a-h]\d$/))
       board.reset_highlights
       break unless invalid_move?(initial, final, piece) || king_in_check?(piece, initial, final)
     end
@@ -47,20 +62,26 @@ class Game
   def get_initial_move
     initial = nil; piece = nil
     loop do
-      initial = string_to_coordinates(get_input(:initial))
+      initial = string_to_coordinates(get_input(:initial, /^[a-h]\d$/))
       piece = board.get_chess_piece(initial)
       break unless piece.nil? || invalid_color?(piece)
     end
     [initial, piece]
   end
 
-  def get_input(type)
+  def get_input(type, match = /\w+/)
     string = nil
     loop do
-      print type == :initial ? "Get piece " : "Move to "
-      print "(e.g. a2): "
+      case type
+      when :initial
+        print "Get piece: "
+      when :final
+        print "Move to: "
+      else
+        print "Input: "
+      end
       string = gets.chomp.downcase
-      break if string.match?(/^[a-h]\d$/)
+      break if string.match?(match)
     end
     string
   end

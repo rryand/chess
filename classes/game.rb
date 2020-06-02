@@ -18,13 +18,15 @@ class Game
     loop do
       display_menu
       input = get_input(:menu)
-      break if ['new', 'load', 'exit'].include?(input)
+      break if ['new', 'load', 'del', 'exit'].include?(input)
     end
     case input
     when 'new'
       play
     when 'load'
       load_game
+    when 'del'
+      delete_game
     when 'exit'
       return
     end
@@ -41,19 +43,27 @@ class Game
     display_result
   end
 
-  def load_game
-    files = Dir.children("saves")
-    display_saves(files)
-    input = nil
-    loop do
-      print "Input: "
-      input = gets.chomp
-      exit if input == 'exit'
-      menu if input == 'back'
-      break if input == input.to_i.to_s && input.to_i.between?(0, files.size - 1)
+  [:load_game, :delete_game].each do |method|
+    define_method(method) do
+      files = Dir.children("saves")
+      loading = method == :load_game ? true : false
+      display_saves(files, loading)
+      input = nil
+      loop do
+        print "Input: "
+        input = gets.chomp
+        exit if input == 'exit'
+        menu if input == 'back'
+        break if input == input.to_i.to_s && input.to_i.between?(0, files.size - 1)
+      end
+      if method == :load_game 
+        load(files[input.to_i])
+        play
+      else
+        delete(files[input.to_i])
+        delete_game
+      end
     end
-    load(files[input.to_i])
-    play
   end
 
   def switch_player

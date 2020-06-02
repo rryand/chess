@@ -40,10 +40,10 @@ module GameDisplay
     puts "Thank you for playing!".center(GAME_WIDTH)
   end
 
-  def display_saves(files)
+  def display_saves(files, load)
     clear_screen
     puts header
-    puts load_text
+    puts saves_text(load)
     files.each_with_index { |file_name, index| puts "\t[#{index}] #{file_name}" }
     puts
   end
@@ -78,15 +78,16 @@ module GameDisplay
     Options:
       'new'   -   Play a new game
       'load'  -   Load a saved game
+      'del'   -   Delete a saved game
       'exit'  -   Exit rchess 
 
     GAMETEXT
   end
 
-  def load_text
+  def saves_text(load)
     <<~GAMETEXT
 
-    Choose a save file to load from:
+    Choose a save file to #{load ? "load from" : "delete"}:
 
     GAMETEXT
   end

@@ -16,6 +16,10 @@ module SaveLoad
     @player = data[:player]
   end
 
+  def delete(file_name)
+    File.delete("saves/#{file_name}")
+  end
+
   private
 
   def save_data

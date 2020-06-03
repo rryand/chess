@@ -10,6 +10,6 @@ This is a chess game implemented using Ruby for the Odin Project.
 
 ## Screenshots
 
-![rchess menu](https://imgur.com/n1lKdzj)
-![rchess in-game](https://imgur.com/rSZyXs1)
-![rchess load screen](https://imgur.com/QrqT7br)
+![rchess menu](https://i.imgur.com/n1lKdzj.png?1)
+![rchess in-game](https://i.imgur.com/rSZyXs1.png?1)
+![rchess load screen](https://i.imgur.com/QrqT7br.png?1)

@@ -57,6 +57,11 @@ module GameDisplay
     puts
   end
 
+  def display_promotion
+    puts "!! PAWN PROMOTION !!".center(GAME_WIDTH)
+    puts promotion_choices
+  end
+
   private
 
   def header
@@ -102,6 +107,16 @@ module GameDisplay
 
     Choose a save file to #{load ? "load from" : "delete"}:
 
+    GAMETEXT
+  end
+
+  def promotion_choices
+    <<~GAMETEXT
+    Choose which piece to promote to:
+      [1] Queen
+      [2] Rook
+      [3] Bishop
+      [4] Knight
     GAMETEXT
   end
 end

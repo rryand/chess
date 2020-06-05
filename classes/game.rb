@@ -83,6 +83,7 @@ class Game
     end
     board.move(initial, final, piece)
     reset_en_passant(player, board.board)
+    promote_pawn(piece, final) if piece.instance_of?(Pawn) && [0, 7].include?(final[1])
   end
   
   def get_initial_move
@@ -202,5 +203,30 @@ class Game
       piece.instance_of?(Pawn) && piece.en_passant && piece.color == player
     end
     pawn_tiles.each { |tile| tile.piece.en_passant = false }
+  end
+
+  def promote_pawn(piece, pos)
+    choice = nil
+    display_promotion
+    loop do
+      print "Input: "
+      choice = gets.chomp.to_i
+      break if choice.between?(1, 4)
+    end
+    new_piece = get_promotion_piece(choice)
+    board.board[pos[1]][pos[0]].piece = new_piece
+  end
+
+  def get_promotion_piece(choice)
+    case choice
+    when 1
+      Queen.new(player)
+    when 2
+      Rook.new(player)
+    when 3
+      Bishop.new(player)
+    when 4
+      Knight.new(player)
+    end
   end
 end
